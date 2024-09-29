@@ -6,8 +6,14 @@ import io
 import pandas as pd
 from streamlit_lottie import st_lottie
 from streamlit_option_menu import option_menu
+import os
 
-POPPLER_PATH = r"C:/poppler-24.02.0/Library/bin"
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the Poppler path relative to the script's directory
+POPPLER_PATH = os.path.join(current_dir, "poppler-24.02.0/Library/bin")
+
 URL = "http://127.0.0.1:8000/extract_from_doc"
 
 # Set page config
