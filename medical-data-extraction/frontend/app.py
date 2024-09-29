@@ -8,15 +8,6 @@ from streamlit_lottie import st_lottie
 from streamlit_option_menu import option_menu
 import os
 
-# Get the directory of the current script
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Construct the Poppler path relative to the script's directory
-POPPLER_PATH = os.path.join(current_dir, "poppler-24.02.0/Library/bin")
-
-# Ensure the Poppler path is added to the system path for subprocess calls
-os.environ["PATH"] += os.pathsep + POPPLER_PATH
-
 URL = "http://127.0.0.1:8000/extract_from_doc"
 
 # Set page config
@@ -152,6 +143,10 @@ selected = option_menu(
 # Update session state based on selection
 st.session_state['page'] = selected
 
+# Function to convert PDF to images
+def convert_pdf_to_images(pdf_file):
+    return convert_from_bytes(pdf_file.getvalue())
+
 if st.session_state['page'] == "Upload":
     st.markdown("## Upload Your Document")
     file = st.file_uploader("Choose a PDF file", type="pdf", help="Upload a prescription or patient details document")
@@ -170,7 +165,7 @@ if st.session_state['page'] == "Upload":
         )
 
         st.markdown("### Preview")
-        pages = convert_from_bytes(file.getvalue(), poppler_path=POPPLER_PATH)
+        pages = convert_pdf_to_images(file)
         st.image(pages[0], use_column_width=False, width=300, caption="Document Preview", output_format="PNG",
                  clamp=True)
 
