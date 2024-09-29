@@ -14,6 +14,9 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Construct the Poppler path relative to the script's directory
 POPPLER_PATH = os.path.join(current_dir, "poppler-24.02.0/Library/bin")
 
+# Ensure the Poppler path is added to the system path for subprocess calls
+os.environ["PATH"] += os.pathsep + POPPLER_PATH
+
 URL = "http://127.0.0.1:8000/extract_from_doc"
 
 # Set page config
