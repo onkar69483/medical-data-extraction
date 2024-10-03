@@ -6,31 +6,28 @@ class PrescriptionParser(MedicalDocParser):
     def __init__(self, text):
         MedicalDocParser.__init__(self, text)
 
-    # def parse(self):
-    #     return{
-    #         "patient_name": self.get_name(),
-    #         "patient_address": self.get_address(),
-    #         "medicines": self.get_medicines(),
-    #         "directions": self.get_directions(),
-    #         "refill": self.get_refill()
-    #     }
-        
     def parse(self):
-        return{
-            "patient_name": self.get_field("patient_name"),
-            "patient_address": self.get_field("patient_address"),
-            "medicines": self.get_field("medicines"),
-            "directions": self.get_field("directions"),
-            "refill": self.get_field("refill")
-        }        
-    
+        return {
+            "nature_of_illness": self.get_field("nature_of_illness"),
+            "critical_findings": self.get_field("critical_findings"),
+            "duration": self.get_field("duration"),
+            "first_consultation_date": self.get_field("first_consultation_date"),
+            "provisional_diagnosis": self.get_field("provisional_diagnosis"),
+            "proposed_treatment": self.get_field("proposed_treatment"),
+            "surgical_info": self.get_field("surgical_info"),
+        }
+
     def get_field(self, field_name):
         pattern_dict = {
-            "patient_name": {"pattern": "Name:(.*)Date", "flags": 0},
-            "patient_address": {"pattern": "Address:(.*)\n", "flags": 0},
-            "medicines": {"pattern": "Address:[^\n]*(.*)Directions", "flags": re.DOTALL},
-            "directions": {"pattern": "Directions:.(.*)Refill", "flags": re.DOTALL},
-            "refill": {"pattern": "Refill:.*(\d).*times", "flags": 0},
+            "nature_of_illness": {"pattern": r"Nature of Illness / Disease with presenting complaint:([^\n]*)",
+                                  "flags": 0},
+            "critical_findings": {"pattern": r"Relevant Critical Findings:([^\n]*)", "flags": 0},
+            "duration": {"pattern": r"Duration of the present ailment:([^\n]*)", "flags": 0},
+            "first_consultation_date": {"pattern": r"Date of First consultation:\s*(\d{1,2}/\d{1,2}/\d{2,4})",
+                                        "flags": 0},
+            "provisional_diagnosis": {"pattern": r"Provisional diagnosis:([^\n]*)", "flags": 0},
+            "proposed_treatment": {"pattern": r"Proposed line of treatment:\s*(.*)", "flags": re.DOTALL},
+            "surgical_info": {"pattern": r"If surgical, name of surgery:([^\n]*)", "flags": 0},
         }
 
         pattern_object = pattern_dict.get(field_name)
@@ -38,59 +35,23 @@ class PrescriptionParser(MedicalDocParser):
             matches = re.findall(pattern_object["pattern"], self.text, flags=pattern_object["flags"])
             if len(matches) > 0:
                 return matches[0].strip()
-
-    # below functions condensed to get_field()
-    # def get_name(self):
-    #     pattern = "Name:(.*)Date"
-    #     matches = re.findall(pattern, self.text)
-    #     if len(matches) > 0:
-    #         return matches[0].strip()
-    
-    # def get_address(self):
-    #     pattern = "Address:(.*)\n"
-    #     matches = re.findall(pattern, self.text)
-    #     if len(matches) > 0:
-    #         return matches[0].strip()
-        
-    # def get_medicines(self):
-    #     pattern = "Address:[^\n]*(.*)Directions"
-    #     matches = re.findall(pattern, self.text, flags=re.DOTALL)
-    #     if len(matches) > 0:
-    #         return matches[0].strip()
-
-    # def get_directions(self):
-    #     pattern = "Directions:.(.*)Refill"
-    #     matches = re.findall(pattern, self.text, flags=re.DOTALL)
-    #     if len(matches) > 0:
-    #         return matches[0].strip()
-
-    # def get_refill(self):
-    #     pattern = "Refill:.*(\d).*times"
-    #     matches = re.findall(pattern, self.text)
-    #     if len(matches) > 0:
-    #         return matches[0].strip()
+        return None
 
 
+# Example usage
 if __name__ == "__main__":
     document_text = """
-Dr John Smith, M.D
-2 Non-Important Street,
-New York, Phone (000)-111-2222
-
-Name: Marta Sharapova Date: 5/11/2022
-
-Address: 9 tennis court, new Russia, DC
-
-Prednisone 20 md
-Lialda 2.4 gram
-
-Directions:
-
-Prednisone, Taper 5 mg every 3 days,
-Finish in 2.5 weeks 7
-Lialda - take 2 pill everyday for 1 month
-
-Refill: _2_times"""
+    C. Nature of Illness / Disease with presenting complaint: CHRONIC LIVER DISEASE; PEDAL EDEMA, CRAMPS
+    D. Relevant Critical Findings: JAUNDICE, PEDAL EDEMA
+    E. Duration of the present ailment: 1 YEAR 
+    i. Date of First consultation: 8/11/21
+    F. Provisional diagnosis: DECOMPENSATED CHRONIC LIVER DISEASE
+    G. Proposed line of treatment:
+    i. Medical Management: ( )
+    ii. Surgical Management: (X)
+    iii. Intensive care: (X)
+    H. If surgical, name of surgery: LIVER TRANSPLANTATION
+    """
 
     pp = PrescriptionParser(document_text)
     print(pp.parse())

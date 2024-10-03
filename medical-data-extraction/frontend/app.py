@@ -197,9 +197,15 @@ elif st.session_state['page'] == "Process":
 
                 # Ensure all expected columns are present
                 expected_columns = {
-                    "prescription": ["patient_name", "patient_address", "medicines", "refill", "directions"],
-                    "patient_details": ["patient_name", "phone_no", "has_insurance", "vaccination_status",
-                                        "medical_problems"]
+                    "prescription": [
+                        "nature_of_illness", "critical_findings", "duration",
+                        "first_consultation_date", "provisional_diagnosis",
+                        "proposed_treatment", "surgical_info"
+                    ],
+                    "patient_details": [
+                        "patient_name", "phone_no", "has_insurance",
+                        "vaccination_status", "medical_problems"
+                    ]
                 }
 
                 for column in expected_columns[st.session_state['file_format']]:
@@ -232,11 +238,13 @@ elif st.session_state['page'] == "Results":
             details_container = st.container()
             with details_container:
                 if st.session_state['file_format'] == "prescription":
-                    st.text_input("Name", value=st.session_state.get("patient_name", ""), disabled=True)
-                    st.text_input("Address", value=st.session_state.get("patient_address", ""), disabled=True)
-                    st.text_area("Medicines", value=st.session_state.get("medicines", ""), disabled=True, height=100)
-                    st.text_input("Refill", value=st.session_state.get("refill", ""), disabled=True)
-                    st.text_area("Directions", value=st.session_state.get("directions", ""), disabled=True, height=100)
+                    st.text_area("Nature of Illness", value=st.session_state.get("nature_of_illness", ""), disabled=True, height=100)
+                    st.text_area("Critical Findings", value=st.session_state.get("critical_findings", ""), disabled=True, height=100)
+                    st.text_input("Duration", value=st.session_state.get("duration", ""), disabled=True)
+                    st.text_input("First Consultation Date", value=st.session_state.get("first_consultation_date", ""), disabled=True)
+                    st.text_area("Provisional Diagnosis", value=st.session_state.get("provisional_diagnosis", ""), disabled=True, height=100)
+                    st.text_area("Proposed Treatment", value=st.session_state.get("proposed_treatment", ""), disabled=True, height=100)
+                    st.text_input("Surgical Info", value=st.session_state.get("surgical_info", ""), disabled=True)
                 elif st.session_state['file_format'] == "patient_details":
                     st.text_input("Name", value=st.session_state.get("patient_name", ""), disabled=True)
                     st.text_input("Phone No.", value=st.session_state.get("phone_no", ""), disabled=True)
